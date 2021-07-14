@@ -29,6 +29,7 @@ ClockTimerFrame::ClockTimerFrame(wxWindow *parent, wxWindowID id, const wxString
     timerLabel->SetFont(wxFont(14, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, false, wxT("Sans")));
     timerLabel->SetEditable(false);
     timerLabel->SetCanFocus(false);
+    updateTimer();
     gSizer2->Add(timerLabel, 0, wxALL, 5);
 
     wxWrapSizer *wSizer1;
@@ -88,14 +89,28 @@ ClockTimerFrame::ClockTimerFrame(wxWindow *parent, wxWindowID id, const wxString
     m_clockTimer.Bind(wxEVT_TIMER, &ClockTimerFrame::onUpdateClock, this);
     m_clockTimer.Start(1000);
 
+    m_timer.Bind(wxEVT_TIMER, &ClockTimerFrame::onUpdateTimer, this);
+
     changeFormatButton->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ClockTimerFrame::changeClockFormat),
                                 nullptr, this);
+    startButton->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ClockTimerFrame::startTimer), nullptr,
+                         this);
+    pauseButton->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ClockTimerFrame::pauseTimer), nullptr,
+                         this);
+    resetButton->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ClockTimerFrame::resetTimer), nullptr,
+                         this);
 }
 
 ClockTimerFrame::~ClockTimerFrame() {
     // Disconnect Events
     changeFormatButton->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
                                    wxCommandEventHandler(ClockTimerFrame::changeClockFormat), nullptr, this);
+    startButton->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ClockTimerFrame::startTimer), nullptr,
+                            this);
+    pauseButton->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ClockTimerFrame::pauseTimer), nullptr,
+                            this);
+    resetButton->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ClockTimerFrame::resetTimer), nullptr,
+                            this);
 }
 
 void ClockTimerFrame::onUpdateClock(wxTimerEvent &) {
@@ -114,4 +129,52 @@ void ClockTimerFrame::changeClockFormat(wxCommandEvent &event) {
         format = 1;
     }
     updateClock();
+}
+
+void ClockTimerFrame::startTimer(wxCommandEvent &event) {
+    m_startTime = wxDateTime::Now();
+    m_timer.Start(1000);
+
+    if (currentTimer == 0) {
+        int hour = wxAtoi(hourTimer->GetValue());
+        int minute = wxAtoi(minuteTimer->GetValue());
+        wxTimeSpan timeValue(hour, minute);
+
+        timerStartTime = timeValue;
+    }
+    updateTimer();
+}
+
+void ClockTimerFrame::pauseTimer(wxCommandEvent &event) {
+    wxDateTime currentTime = wxDateTime::Now();
+    currentTimer += currentTime - m_startTime;
+    m_timer.Stop();
+}
+
+void ClockTimerFrame::resetTimer(wxCommandEvent &event) {
+    m_timer.Stop();
+    currentTimer = 0;
+    timerLabel->Clear();
+    timerLabel->AppendText("0:00:00:00");
+}
+
+void ClockTimerFrame::updateTimer() {
+    if (m_timer.IsRunning()) {
+        wxDateTime currentTime = wxDateTime::Now();
+        wxTimeSpan elapsedTime = currentTime - m_startTime + currentTimer;
+        elapsedTime = timerStartTime - elapsedTime;
+        if (elapsedTime == 0 && timerStartTime != 0) {
+            m_timer.Stop();
+            currentTimer = 0;
+            timerLabel->Clear();
+            timerLabel->AppendText("0:00:00:00");
+        }
+
+        timerLabel->Clear();
+        timerLabel->AppendText(elapsedTime.Format("%D:%H:%M:%S"));
+    }
+}
+
+void ClockTimerFrame::onUpdateTimer(wxTimerEvent &) {
+    updateTimer();
 }

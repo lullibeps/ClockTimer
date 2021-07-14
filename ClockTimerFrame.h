@@ -36,6 +36,10 @@ class ClockTimerFrame : public wxFrame {
 private:
     int format = 1;
     wxTimer m_clockTimer;
+    wxTimeSpan currentTimer = 0;
+    wxTimeSpan timerStartTime = 0;
+    wxTimer m_timer;
+    wxDateTime m_startTime;
 
 protected:
     wxTextCtrl *clockDataLabel;
@@ -62,5 +66,15 @@ public:
     void onUpdateClock(wxTimerEvent &);
 
     void changeClockFormat(wxCommandEvent &event);
+
+    void startTimer(wxCommandEvent &event);
+
+    void pauseTimer(wxCommandEvent &event);
+
+    void resetTimer(wxCommandEvent &event);
+
+    void updateTimer();
+
+    void onUpdateTimer(wxTimerEvent &);
 
 };
