@@ -9,7 +9,7 @@ class ClockData {
 private:
     static int numOfFormat;
 public:
-    std::string getClockData(int format);
+    static std::string getClockData(int format);
 
     static int getNumOfFormat();
 };

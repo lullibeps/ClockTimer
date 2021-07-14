@@ -10,7 +10,7 @@
 
 #include <wx/artprov.h>
 #include <wx/xrc/xmlres.h>
-#include <wx/string.h>
+#include <cstring>
 #include <wx/textctrl.h>
 #include <wx/gdicmn.h>
 #include <wx/font.h>
@@ -34,6 +34,8 @@
 ///////////////////////////////////////////////////////////////////////////////
 class ClockTimerFrame : public wxFrame {
 private:
+    int format = 1;
+    wxTimer m_clockTimer;
 
 protected:
     wxTextCtrl *clockDataLabel;
@@ -49,10 +51,16 @@ protected:
 
 public:
 
-    ClockTimerFrame(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString &title = wxEmptyString,
-                    const wxPoint &pos = wxDefaultPosition, const wxSize &size = wxSize(500, 300),
-                    long style = wxDEFAULT_FRAME_STYLE | wxTAB_TRAVERSAL);
+    explicit ClockTimerFrame(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString &title = wxEmptyString,
+                             const wxPoint &pos = wxDefaultPosition, const wxSize &size = wxSize(500, 300),
+                             long style = wxDEFAULT_FRAME_STYLE | wxTAB_TRAVERSAL);
 
-    ~ClockTimerFrame() = default;
+    ~ClockTimerFrame() override;
+
+    void updateClock();
+
+    void onUpdateClock(wxTimerEvent &);
+
+    void changeClockFormat(wxCommandEvent &event);
 
 };

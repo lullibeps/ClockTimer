@@ -83,5 +83,35 @@ ClockTimerFrame::ClockTimerFrame(wxWindow *parent, wxWindowID id, const wxString
 
     this->Centre(wxBOTH);
 
+    updateClock();
+
+    m_clockTimer.Bind(wxEVT_TIMER, &ClockTimerFrame::onUpdateClock, this);
+    m_clockTimer.Start(1000);
+
+    changeFormatButton->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ClockTimerFrame::changeClockFormat),
+                                nullptr, this);
 }
 
+ClockTimerFrame::~ClockTimerFrame() {
+    // Disconnect Events
+    changeFormatButton->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
+                                   wxCommandEventHandler(ClockTimerFrame::changeClockFormat), nullptr, this);
+}
+
+void ClockTimerFrame::onUpdateClock(wxTimerEvent &) {
+    updateClock();
+}
+
+void ClockTimerFrame::updateClock() {
+    clockDataLabel->Clear();
+    clockDataLabel->AppendText(ClockData::getClockData(format));
+}
+
+void ClockTimerFrame::changeClockFormat(wxCommandEvent &event) {
+    if (format < ClockData::getNumOfFormat()) {
+        format++;
+    } else {
+        format = 1;
+    }
+    updateClock();
+}
