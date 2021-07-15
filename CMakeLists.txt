@@ -3,6 +3,8 @@ project(ClockTimer)
 
 set(CMAKE_CXX_STANDARD 14)
 
+add_subdirectory(test)
+
 find_package(wxWidgets REQUIRED COMPONENTS net core base)
 include(${wxWidgets_USE_FILE})
 
