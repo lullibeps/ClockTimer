@@ -8,6 +8,9 @@ add_subdirectory(test)
 find_package(wxWidgets REQUIRED COMPONENTS net core base)
 include(${wxWidgets_USE_FILE})
 
-add_executable(ClockTimer ClockTimerFrame.cpp ClockTimerFrame.h Application.cpp Application.h ClockData.cpp ClockData.h)
+set(SOURCE_FILES ClockData.h ClockData.cpp ClockTimerFrame.cpp ClockTimerFrame.h)
+add_executable(ClockTimer Application.h Application.cpp)
+add_library(core ${SOURCE_FILES})
+target_link_libraries(ClockTimer core)
 
 target_link_libraries(ClockTimer ${wxWidgets_LIBRARIES})
