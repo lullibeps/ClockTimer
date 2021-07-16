@@ -70,9 +70,11 @@ ClockTimerFrame::ClockTimerFrame(wxWindow *parent, wxWindowID id, const wxString
     gSizer3->Add(startButton, 0, wxALIGN_CENTER_HORIZONTAL, 5);
 
     pauseButton = new wxButton(this, wxID_ANY, wxT("Pause"), wxDefaultPosition, wxDefaultSize, 0);
+    pauseButton->Enable(false);
     gSizer3->Add(pauseButton, 0, wxALIGN_CENTER_HORIZONTAL, 5);
 
     resetButton = new wxButton(this, wxID_ANY, wxT("Reset"), wxDefaultPosition, wxDefaultSize, 0);
+    resetButton->Enable(false);
     gSizer3->Add(resetButton, 0, wxALIGN_CENTER_HORIZONTAL, 5);
 
 
@@ -142,6 +144,9 @@ void ClockTimerFrame::startTimer(wxCommandEvent &event) {
 
         timerStartTime = timeValue;
     }
+    startButton->Enable(false);
+    pauseButton->Enable(true);
+    resetButton->Enable(true);
     updateTimer();
 }
 
@@ -149,6 +154,8 @@ void ClockTimerFrame::pauseTimer(wxCommandEvent &event) {
     wxDateTime currentTime = wxDateTime::Now();
     currentTimer += currentTime - m_startTime;
     m_timer.Stop();
+    pauseButton->Enable(false);
+    startButton->Enable(true);
 }
 
 void ClockTimerFrame::resetTimer(wxCommandEvent &event) {
@@ -156,6 +163,9 @@ void ClockTimerFrame::resetTimer(wxCommandEvent &event) {
     currentTimer = 0;
     timerLabel->Clear();
     timerLabel->AppendText("0:00:00:00");
+    resetButton->Enable(false);
+    pauseButton->Enable(false);
+    startButton->Enable(true);
 }
 
 void ClockTimerFrame::updateTimer() {
