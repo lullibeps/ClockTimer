@@ -4,6 +4,6 @@ add_subdirectory(./lib/googletest)
 set(gtest_SOURCE_DIR, ./lib/googletest/)
 include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
 
-set(TEST_SOURCE_FILES runAllTests.cpp ClockDataTest.cpp)
+set(TEST_SOURCE_FILES runAllTests.cpp ClockDataTest.cpp ClockDataFixture.cpp)
 add_executable(runClockDataTests ${TEST_SOURCE_FILES})
 target_link_libraries(runClockDataTests gtest gtest_main core)

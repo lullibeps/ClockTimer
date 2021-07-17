@@ -25,16 +25,17 @@
 #include <wx/wrapsizer.h>
 #include <wx/frame.h>
 #include "wx/timer.h"
+#include "ClockData.h"
 
 ///////////////////////////////////////////////////////////////////////////
 
 
 ///////////////////////////////////////////////////////////////////////////////
-/// Class ClockTimerFrame
+/// Class ClockTimerFrameformat
 ///////////////////////////////////////////////////////////////////////////////
 class ClockTimerFrame : public wxFrame {
 private:
-    int format = 1;
+    ClockData clockData;
     wxTimer m_clockTimer;
     wxTimeSpan currentTimer = 0;
     wxTimeSpan timerStartTime = 0;
@@ -43,7 +44,8 @@ private:
 
 protected:
     wxTextCtrl *clockDataLabel;
-    wxButton *changeFormatButton;
+    wxButton *changeTimeFormatButton;
+    wxButton *changeDataFormatButton;
     wxTextCtrl *timerLabel;
     wxTextCtrl *hourTimer;
     wxTextCtrl *minuteTimer;
@@ -55,9 +57,10 @@ protected:
 
 public:
 
-    explicit ClockTimerFrame(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString &title = wxEmptyString,
-                             const wxPoint &pos = wxDefaultPosition, const wxSize &size = wxSize(500, 300),
-                             long style = wxDEFAULT_FRAME_STYLE | wxTAB_TRAVERSAL);
+    ClockTimerFrame(wxWindow *parent, FormatoData formatoData, FormatoOrario formatoOrario, wxWindowID id = wxID_ANY,
+                    const wxString &title = wxEmptyString,
+                    const wxPoint &pos = wxDefaultPosition, const wxSize &size = wxSize(520, 300),
+                    long style = wxDEFAULT_FRAME_STYLE | wxTAB_TRAVERSAL);
 
     ~ClockTimerFrame() override;
 
@@ -65,7 +68,9 @@ public:
 
     void onUpdateClock(wxTimerEvent &);
 
-    void changeClockFormat(wxCommandEvent &event);
+    void changeTimeFormat(wxCommandEvent &event);
+
+    void changeDataFormat(wxCommandEvent &event);
 
     void startTimer(wxCommandEvent &event);
 

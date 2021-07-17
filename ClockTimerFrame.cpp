@@ -1,26 +1,31 @@
 #include "ClockTimerFrame.h"
 #include "ClockData.h"
 
-ClockTimerFrame::ClockTimerFrame(wxWindow *parent, wxWindowID id, const wxString &title, const wxPoint &pos,
-                                 const wxSize &size, long style) : wxFrame(parent, id, title, pos, size, style) {
+ClockTimerFrame::ClockTimerFrame(wxWindow *parent, FormatoData formatoData, FormatoOrario formatoOrario, wxWindowID id,
+                                 const wxString &title, const wxPoint &pos,
+                                 const wxSize &size, long style) : clockData(formatoData, formatoOrario),
+                                                                   wxFrame(parent, id, title, pos, size, style) {
     this->SetSizeHints(wxDefaultSize, wxDefaultSize);
 
     wxBoxSizer *bSizer1;
     bSizer1 = new wxBoxSizer(wxVERTICAL);
 
-    wxGridSizer *gSizer1;
-    gSizer1 = new wxGridSizer(1, 2, 0, 0);
+    wxWrapSizer *wSizer3;
+    wSizer3 = new wxWrapSizer(wxHORIZONTAL, wxWRAPSIZER_DEFAULT_FLAGS);
 
-    clockDataLabel = new wxTextCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(250, -1), 0);
+    clockDataLabel = new wxTextCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(280, -1), 0);
     clockDataLabel->SetFont(wxFont(14, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, false, wxT("Sans")));
     clockDataLabel->SetEditable(false);
     clockDataLabel->SetCanFocus(false);
-    gSizer1->Add(clockDataLabel, 0, wxALL, 5);
+    wSizer3->Add(clockDataLabel, 0, wxALIGN_CENTER_HORIZONTAL, 5);
 
-    changeFormatButton = new wxButton(this, wxID_ANY, wxT("Change Format"), wxDefaultPosition, wxDefaultSize, 0);
-    gSizer1->Add(changeFormatButton, 0, wxALL, 5);
+    changeTimeFormatButton = new wxButton(this, wxID_ANY, wxT("Change Time"), wxDefaultPosition, wxDefaultSize, 0);
+    wSizer3->Add(changeTimeFormatButton, 0, wxALIGN_CENTER_HORIZONTAL, 5);
 
-    bSizer1->Add(gSizer1, 1, wxEXPAND, 5);
+    changeDataFormatButton = new wxButton(this, wxID_ANY, wxT("Change Data"), wxDefaultPosition, wxDefaultSize, 0);
+    wSizer3->Add(changeDataFormatButton, 0, wxALIGN_CENTER_HORIZONTAL, 5);
+
+    bSizer1->Add(wSizer3, 1, wxEXPAND, 5);
 
     wxGridSizer *gSizer2;
     gSizer2 = new wxGridSizer(1, 3, 0, 0);
@@ -86,6 +91,8 @@ ClockTimerFrame::ClockTimerFrame(wxWindow *parent, wxWindowID id, const wxString
 
     this->Centre(wxBOTH);
 
+    //clockData.setCustomData(25,12,2018,16,30,0);
+
     updateClock();
 
     m_clockTimer.Bind(wxEVT_TIMER, &ClockTimerFrame::onUpdateClock, this);
@@ -93,8 +100,12 @@ ClockTimerFrame::ClockTimerFrame(wxWindow *parent, wxWindowID id, const wxString
 
     m_timer.Bind(wxEVT_TIMER, &ClockTimerFrame::onUpdateTimer, this);
 
-    changeFormatButton->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ClockTimerFrame::changeClockFormat),
-                                nullptr, this);
+    changeTimeFormatButton->Connect(wxEVT_COMMAND_BUTTON_CLICKED,
+                                    wxCommandEventHandler(ClockTimerFrame::changeTimeFormat),
+                                    nullptr, this);
+    changeDataFormatButton->Connect(wxEVT_COMMAND_BUTTON_CLICKED,
+                                    wxCommandEventHandler(ClockTimerFrame::changeDataFormat),
+                                    nullptr, this);
     startButton->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ClockTimerFrame::startTimer), nullptr,
                          this);
     pauseButton->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ClockTimerFrame::pauseTimer), nullptr,
@@ -105,8 +116,11 @@ ClockTimerFrame::ClockTimerFrame(wxWindow *parent, wxWindowID id, const wxString
 
 ClockTimerFrame::~ClockTimerFrame() {
     // Disconnect Events
-    changeFormatButton->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
-                                   wxCommandEventHandler(ClockTimerFrame::changeClockFormat), nullptr, this);
+    changeTimeFormatButton->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
+                                       wxCommandEventHandler(ClockTimerFrame::changeTimeFormat), nullptr, this);
+    changeDataFormatButton->Connect(wxEVT_COMMAND_BUTTON_CLICKED,
+                                    wxCommandEventHandler(ClockTimerFrame::changeDataFormat),
+                                    nullptr, this);
     startButton->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ClockTimerFrame::startTimer), nullptr,
                             this);
     pauseButton->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ClockTimerFrame::pauseTimer), nullptr,
@@ -121,14 +135,32 @@ void ClockTimerFrame::onUpdateClock(wxTimerEvent &) {
 
 void ClockTimerFrame::updateClock() {
     clockDataLabel->Clear();
-    clockDataLabel->AppendText(ClockData::getClockData(format));
+    clockDataLabel->AppendText(clockData.getClockData());
 }
 
-void ClockTimerFrame::changeClockFormat(wxCommandEvent &event) {
-    if (format < ClockData::getNumOfFormat()) {
-        format++;
-    } else {
-        format = 1;
+void ClockTimerFrame::changeTimeFormat(wxCommandEvent &event) {
+    switch (clockData.getFormatoOrario()) {
+        case FormatoOrario::h24:
+            clockData.setFormatoOrario(FormatoOrario::h12);
+            break;
+        case FormatoOrario::h12:
+            clockData.setFormatoOrario(FormatoOrario::h24);
+            break;
+    }
+    updateClock();
+}
+
+void ClockTimerFrame::changeDataFormat(wxCommandEvent &event) {
+    switch (clockData.getFormatoData()) {
+        case FormatoData::europeo:
+            clockData.setFormatoData(FormatoData::cinese);
+            break;
+        case FormatoData::cinese:
+            clockData.setFormatoData(FormatoData::statunitense);
+            break;
+        case FormatoData::statunitense:
+            clockData.setFormatoData(FormatoData::europeo);
+            break;
     }
     updateClock();
 }

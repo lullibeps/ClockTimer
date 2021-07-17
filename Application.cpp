@@ -9,7 +9,7 @@ wxIMPLEMENT_APP(Application);
 
 bool Application::OnInit() {
 
-    ClockTimerFrame *frame = new ClockTimerFrame(NULL);
+    ClockTimerFrame *frame = new ClockTimerFrame(NULL, FormatoData::europeo, FormatoOrario::h24);
     frame->Show(true);
     return true;
 }

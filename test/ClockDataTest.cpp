@@ -2,24 +2,21 @@
 
 #include "../ClockData.h"
 
-TEST(ClockData, GetData
-) {
-ASSERT_EQ("-", ClockData::getClockData(1).substr(2, 1));
-ASSERT_EQ("-", ClockData::getClockData(1).substr(5, 1));
-ASSERT_EQ("/", ClockData::getClockData(2).substr(2, 1));
-ASSERT_EQ("/", ClockData::getClockData(2).substr(5, 1));
-ASSERT_EQ("-", ClockData::getClockData(3).substr(2, 1));
-ASSERT_EQ("-", ClockData::getClockData(3).substr(5, 1));
-ASSERT_EQ("/", ClockData::getClockData(4).substr(2, 1));
-ASSERT_EQ("/", ClockData::getClockData(4).substr(5, 1));
+TEST(ClockData, DefaultConstructor) {
+    ClockData c;
+    ASSERT_EQ(FormatoOrario::h24, c.getFormatoOrario());
+    ASSERT_EQ(FormatoData::europeo, c.getFormatoData());
+    ASSERT_FALSE(c.isUseCustomData());
 }
 
 
-TEST(GameCharacter, GetFormat
-) {
-ASSERT_EQ(4,
-
-ClockData::getNumOfFormat()
-
-);
+TEST(ClockData, TestCustomData) {
+    ClockData c;
+    c.setCustomData(1, 2, 3, 4, -121, 10);
+    ASSERT_EQ("1/2/3 - 1:59", c.getClockData().substr(0, 12));
+    c.setCustomData(-1, 2, 3, 4, 2, 10);
+    ASSERT_EQ("30/1/3 - 4:2", c.getClockData().substr(0, 12));
+    ASSERT_TRUE(c.isUseCustomData());
+    c.setUseCustomData(false);
+    ASSERT_FALSE(c.isUseCustomData());
 }
