@@ -10,7 +10,6 @@
 
 #include <wx/artprov.h>
 #include <wx/xrc/xmlres.h>
-#include <cstring>
 #include <wx/textctrl.h>
 #include <wx/gdicmn.h>
 #include <wx/font.h>
@@ -24,8 +23,8 @@
 #include <wx/stattext.h>
 #include <wx/wrapsizer.h>
 #include <wx/frame.h>
-#include "wx/timer.h"
 #include "ClockData.h"
+#include "Countdown.h"
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -37,10 +36,8 @@ class ClockTimerFrame : public wxFrame {
 private:
     ClockData clockData;
     wxTimer m_clockTimer;
-    wxTimeSpan currentTimer = 0;
-    wxTimeSpan timerStartTime = 0;
     wxTimer m_timer;
-    wxDateTime m_startTime;
+    Countdown myTimer;
 
 protected:
     wxTextCtrl *clockDataLabel;

@@ -166,35 +166,38 @@ void ClockTimerFrame::changeDataFormat(wxCommandEvent &event) {
 }
 
 void ClockTimerFrame::startTimer(wxCommandEvent &event) {
-    m_startTime = wxDateTime::Now();
-    m_timer.Start(1000);
 
-    if (currentTimer == 0) {
-        int hour = wxAtoi(hourTimer->GetValue());
-        int minute = wxAtoi(minuteTimer->GetValue());
-        wxTimeSpan timeValue(hour, minute);
+    int hour = wxAtoi(hourTimer->GetValue());
+    int minute = wxAtoi(minuteTimer->GetValue());
 
-        timerStartTime = timeValue;
+    if (myTimer.startTimer(hour, minute)) {
+        m_timer.Start(1000);
+
+        startButton->Enable(false);
+        pauseButton->Enable(true);
+        resetButton->Enable(true);
+
+        updateTimer();
     }
-    startButton->Enable(false);
-    pauseButton->Enable(true);
-    resetButton->Enable(true);
-    updateTimer();
 }
 
 void ClockTimerFrame::pauseTimer(wxCommandEvent &event) {
-    wxDateTime currentTime = wxDateTime::Now();
-    currentTimer += currentTime - m_startTime;
     m_timer.Stop();
+
+    myTimer.pauseTimer();
+
     pauseButton->Enable(false);
     startButton->Enable(true);
 }
 
 void ClockTimerFrame::resetTimer(wxCommandEvent &event) {
     m_timer.Stop();
-    currentTimer = 0;
+
+    myTimer.resetTimer();
+
     timerLabel->Clear();
     timerLabel->AppendText("0:00:00:00");
+
     resetButton->Enable(false);
     pauseButton->Enable(false);
     startButton->Enable(true);
@@ -202,18 +205,15 @@ void ClockTimerFrame::resetTimer(wxCommandEvent &event) {
 
 void ClockTimerFrame::updateTimer() {
     if (m_timer.IsRunning()) {
-        wxDateTime currentTime = wxDateTime::Now();
-        wxTimeSpan elapsedTime = currentTime - m_startTime + currentTimer;
-        elapsedTime = timerStartTime - elapsedTime;
-        if (elapsedTime == 0 && timerStartTime != 0) {
+
+        wxTimeSpan countdownTime = myTimer.getCountdownTime();
+
+        if (countdownTime == 0) {
             m_timer.Stop();
-            currentTimer = 0;
-            timerLabel->Clear();
-            timerLabel->AppendText("0:00:00:00");
         }
 
         timerLabel->Clear();
-        timerLabel->AppendText(elapsedTime.Format("%D:%H:%M:%S"));
+        timerLabel->AppendText(countdownTime.Format("%D:%H:%M:%S"));
     }
 }
 

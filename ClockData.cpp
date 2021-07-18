@@ -13,7 +13,7 @@ std::string ClockData::getClockData() {
     tm *ltm = localtime(&now);
 
     std::string result;
-    std::string timeSpecifier;
+    std::string timeSpecifier; // PM - AM
 
     std::string dataDiv = "/";
     std::string timeDiv = ":";
@@ -69,11 +69,11 @@ void ClockData::setFormatoOrario(FormatoOrario formatOrario) {
     ClockData::formatoOrario = formatOrario;
 }
 
-FormatoData ClockData::getFormatoData() const {
+const FormatoData &ClockData::getFormatoData() const {
     return formatoData;
 }
 
-FormatoOrario ClockData::getFormatoOrario() const {
+const FormatoOrario &ClockData::getFormatoOrario() const {
     return formatoOrario;
 }
 

@@ -7,7 +7,7 @@
 
 enum class FormatoData {
     europeo, cinese, statunitense
-};//gma, amg, mga
+};
 enum class FormatoOrario {
     h12, h24
 };
@@ -28,9 +28,9 @@ public:
 
     void setFormatoOrario(FormatoOrario formatOrario);
 
-    FormatoData getFormatoData() const;
+    const FormatoData &getFormatoData() const;
 
-    FormatoOrario getFormatoOrario() const;
+    const FormatoOrario &getFormatoOrario() const;
 
     void setUseCustomData(bool customDateSet);
 

@@ -13,6 +13,7 @@
 
 #endif
 
+#include "wx/timer.h"
 
 class Application : public wxApp {
 public:
